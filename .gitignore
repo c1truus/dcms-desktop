@@ -1,0 +1,8 @@
+# Node
+node_modules/
+
+# Tauri
+src-tauri/target/
+
+# OS
+.DS_Store
