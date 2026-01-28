@@ -1,0 +1,251 @@
+Nice — those versions mean you’re fully prepped ✅
+
+Below is a **copy-paste-ready `SETUP_UBUNTU.md`** you can drop into your new `dcms-desktop` repo. It documents exactly what you did, why, and how to verify / troubleshoot.
+
+> Save this as: `SETUP_UBUNTU.md`
+
+````md
+# DCMS Desktop (Tauri) — Ubuntu 24.04 Setup Guide
+
+This guide sets up the **Tauri dev environment** on **Ubuntu 24.04** for the `dcms-desktop` project.
+
+- Target for development: Linux (Ubuntu)
+- Target for shipping: **Windows 11 primary**, macOS/Linux optional
+- Frontend for early prototype: **plain HTML/CSS/JS**
+- Auth model: Bearer token against DCMS backend `/api/v1/...`
+
+---
+
+## 1) System Requirements
+
+Tested on:
+- Ubuntu 24.04.x
+- GNOME + X11
+- Rust installed via `rustup`
+
+You need:
+- Rust toolchain (`rustc`, `cargo`)
+- Node.js (dev-only; not required for end users)
+- Tauri CLI
+- Linux system libraries (WebKitGTK, GTK, etc.)
+
+---
+
+## 2) Confirm Rust Toolchain
+
+```bash
+rustc --version
+cargo --version
+rustup --version
+````
+
+Example (known good):
+
+* `rustc 1.91.1 ...`
+* `rustup 1.28.x ...`
+
+---
+
+## 3) Install Node.js (Dev-only) via NVM
+
+We use `nvm` because:
+
+* it avoids polluting system packages
+* it allows easy version pinning
+* Node is used as a **build tool** for Tauri dev workflow (not shipped to customers)
+
+### 3.1 Install nvm
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+```
+
+Verify:
+
+```bash
+command -v nvm
+```
+
+### 3.2 Install Node 20 LTS
+
+```bash
+nvm install 20
+nvm use 20
+nvm alias default 20
+```
+
+Verify:
+
+```bash
+node -v
+npm -v
+```
+
+Known good example:
+
+* Node: `v20.20.0`
+* npm: `10.8.2`
+
+---
+
+## 4) Install Tauri CLI (Rust)
+
+This installs `cargo tauri`:
+
+```bash
+cargo install tauri-cli
+```
+
+Verify:
+
+```bash
+cargo tauri --version
+```
+
+Known good example:
+
+* `tauri-cli 2.9.6`
+
+---
+
+## 5) Install Linux Dependencies
+
+Tauri on Linux uses WebKitGTK and GTK for the system WebView and windowing.
+
+```bash
+sudo apt update
+sudo apt install -y \
+  libwebkit2gtk-4.1-dev \
+  libgtk-3-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev \
+  patchelf \
+  pkg-config
+```
+
+Verify:
+
+```bash
+pkg-config --version
+```
+
+Known good example:
+
+* `1.8.1`
+
+---
+
+## 6) Final Verification Checklist
+
+Run:
+
+```bash
+node -v
+npm -v
+cargo tauri --version
+pkg-config --version
+```
+
+If all commands succeed, the machine is ready for `dcms-desktop` development.
+
+Example known-good outputs:
+
+* `node -v` → `v20.20.0`
+* `npm -v` → `10.8.2`
+* `cargo tauri --version` → `tauri-cli 2.9.6`
+* `pkg-config --version` → `1.8.1`
+
+---
+
+## 7) Troubleshooting
+
+### 7.1 `nvm: command not found`
+
+Make sure your shell loaded nvm:
+
+```bash
+source ~/.bashrc
+command -v nvm
+```
+
+If you use `zsh`, load:
+
+```bash
+source ~/.zshrc
+```
+
+### 7.2 WebKitGTK / GTK errors
+
+Reinstall dependencies:
+
+```bash
+sudo apt update
+sudo apt install -y libwebkit2gtk-4.1-dev libgtk-3-dev pkg-config
+```
+
+### 7.3 `cargo tauri` missing
+
+Reinstall Tauri CLI:
+
+```bash
+cargo install tauri-cli
+```
+
+If you have PATH issues, check:
+
+```bash
+echo $PATH
+ls ~/.cargo/bin | head
+```
+
+---
+
+## 8) Notes for Windows/macOS Builds
+
+* Linux dev environment is good for fast iteration.
+* Windows builds are best done on Windows (or CI with Windows runners).
+* macOS builds must be done on macOS (Apple tooling requirement).
+
+---
+
+## 9) Backend Integration Quick Reference
+
+Backend base:
+
+* Dev default: `http://127.0.0.1:8080`
+* API base: `{BASE_URL}/api/v1`
+
+Auth header:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+If any API call returns:
+
+* `401 SESSION_EXPIRED` → clear token and force re-login
+
+---
+
+## 10) What’s Next
+
+After setup:
+
+* Create the Tauri project (`dcms-desktop`)
+* Run `cargo tauri dev` (first “window opens” milestone)
+* Implement:
+
+  * Login UI (username/password/remember me)
+  * Store token securely (OS keychain)
+  * Call `/api/v1/home` and display returned info
+
+```
+
+---
+
+If you want, I can also generate:
+- a matching `SETUP_WINDOWS.md` (for your future Win11 dev boxes)
+- a `scripts/check_env.sh` that prints ✅/❌ for all required tools (super useful for new dev onboarding)
+```
+

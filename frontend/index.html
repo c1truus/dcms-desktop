@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DCMS Desktop</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">DCMS Desktop</div>
+    <div class="env" id="env"></div>
+  </header>
+
+  <!-- LOGIN VIEW -->
+  <main id="view-login" class="card">
+    <h1>Sign in</h1>
+
+    <form id="login-form">
+      <label>
+        Username
+        <input id="username" autocomplete="username" required />
+      </label>
+
+      <label>
+        Password
+        <input id="password" type="password" autocomplete="current-password" required />
+      </label>
+
+      <label class="row">
+        <input id="remember" type="checkbox" />
+        Remember me
+      </label>
+
+      <button id="btn-login" type="submit">Login</button>
+
+      <p class="error" id="login-error"></p>
+    </form>
+  </main>
+
+  <!-- MAIN VIEW -->
+  <main id="view-main" class="card hidden">
+    <h1 id="welcome">Welcome</h1>
+
+    <div class="kv">
+      <div class="k">Base URL</div>
+      <div class="v" id="base-url"></div>
+
+      <div class="k">Token Expires</div>
+      <div class="v" id="expires-at"></div>
+    </div>
+
+    <h2>/api/v1/home response</h2>
+    <pre id="home-json" class="pre"></pre>
+
+    <div class="actions">
+      <button id="btn-refresh">Refresh</button>
+      <button id="btn-logout" class="danger">Logout</button>
+    </div>
+
+    <p class="error" id="main-error"></p>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+
